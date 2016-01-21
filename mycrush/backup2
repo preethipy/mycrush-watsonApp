@@ -1,0 +1,125 @@
+var express =   require("express");
+var multer  =   require('multer');
+var app         =   express();
+bluemix = require('./config/bluemix'),
+validator = require('validator'),
+watson = require('watson-developer-cloud'),
+extend = require('util')._extend,
+fs = require('fs');
+path = require('path');
+request = require('request');
+
+app.set('view engine', 'html');
+app.use(express.static(path.join(__dirname, 'public')));
+//if bluemix credentials exists, then override local
+var credentials = extend({
+  version: 'v2-beta',
+  username: '699b883d-39cf-477e-81ff-bba2ea1d34c7',
+  password: 'yhGfmUGb3N6S',
+  version_date:'2015-12-02'
+}, bluemix.getServiceCreds('visual_recognition')); // VCAP_SERVICES
+
+
+
+//Create the service wrapper
+var visualRecognition = watson.visual_recognition(credentials);
+
+var storage =   multer.diskStorage({
+  destination: function (req, file, callback) {
+    callback(null, './uploads');
+  },
+  filename: function (req, file, callback) {
+    //callback(null, file.fieldname + '-' + Date.now());
+	  //console.log("req", req);
+	  console.log("file name", file.originalname);
+	  callback(null, file.originalname);
+  }
+});
+var upload = multer({ storage : storage}).single('pic');
+
+
+app.get('/',function(req,res){
+	  console.log("Path",__dirname + "/public/index.html");
+      res.render('index.html');
+});
+
+var formData
+var formData1
+app.post('/',function(req,res){
+    upload(req,res,function(err) {
+        if(err) {
+        	console.log("error ",err)
+            return res.end("Error uploading file.");
+        }
+        console.log("File1 is uploaded");
+        imgFile = fs.createReadStream(path.join('./uploads',req.file.originalname));
+
+        formData = {
+          images_file: imgFile
+        };
+        var upload1 = multer({ storage : storage}).single('pic1');
+        upload1(req,res,function(err) {
+            if(err) {
+                return res.end("Error uploading file1.");
+            }
+            console.log("File2 is uploaded");
+            imgFile1 = fs.createReadStream(path.join('./uploads',req.file.originalname));
+            formData1 = {
+          	      images_file: imgFile1
+          	};
+            
+            var obj = {};
+            visualRecognition.classify(formData, function(error, result) {
+              if (error)
+                return res.status(error.error ? error.error.code || 500 : 500).json({ error: error });
+              else{
+              	
+              	//filterUserCreatedClassifier    	    
+              	    console.log('testing' +result);
+              	    
+              	    for (var prop in result) {
+              	        obj[prop] = result[prop];
+              	        var abc = obj[prop]
+              	        for (var subprop in abc) {
+                  	        obj[subprop] = abc[subprop];
+                  	        
+                  	        console.log(obj[subprop]);
+                  	    }
+              	        //console.log(obj[prop]);
+              	    }
+              	    var obj1 = {};
+              	    visualRecognition.classify(formData1, function(error, result) {
+              	        if (error)
+              	          return res.status(error.error ? error.error.code || 500 : 500).json({ error: error });
+              	        else{
+              	        	
+              	        	//filterUserCreatedClassifier    	    
+              	        	    console.log('testing' +result);
+              	        	    
+              	        	    for (var prop in result) {
+              	        	        obj1[prop] = result[prop];
+              	        	        var abc = obj1[prop]
+              	        	        for (var subprop in abc) {
+              	            	        obj1[subprop] = abc[subprop];
+              	            	        
+              	            	        console.log(obj1[subprop]);
+              	            	    }
+              	        	        //console.log(obj[prop]);
+              	        	    }
+              	        	  var response = {'obj1': obj1, 'obj':obj };  
+              	        	  res.json(response);
+              	        }
+              	          
+              	   });              	    
+              }
+                
+            });            
+        });
+
+    });
+    
+});
+
+app.listen(3000,function(){
+    console.log("Working on port 3000");
+});

@@ -1,0 +1,21 @@
+body{
+	background: url("file:///Users/edmondchristian/Desktop/mycrush/love1.jpg");
+	/*background-color: rgba(0,0,0,0.9)*/
+	background-position: center;
+	background-size: cover;
+
+	color: white;
+	text-align: center;
+}
+
+header{
+	position: relative;
+}
+header>img{
+	height: 70px;
+	width: 70px;
+	margin-top: -65px;
+	margin-left: -300px;
+	display: inline;
+	position: absolute;
+}

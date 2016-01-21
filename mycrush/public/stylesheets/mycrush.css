@@ -1,0 +1,22 @@
+body{
+	background: url("../love1.jpg");
+	/*background-color: rgba(0,0,0,0.9)*/
+	background-position: center;
+	background-size: cover;
+	background-opacity: 0.7;
+	
+	color: white;
+	text-align: center;
+}
+
+header{
+	position: relative;
+}
+header>img{
+	height: 70px;
+	width: 70px;
+	margin-top: -65px;
+	margin-left: -300px;
+	display: inline;
+	position: absolute;
+}

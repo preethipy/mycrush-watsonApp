@@ -1,0 +1,50 @@
+body{
+	background: url("love1.jpg");
+	/*background-color: rgba(0,0,0,0.9)*/
+	background-position: center;
+	background-size: cover;
+	color: white;
+	text-align: center;
+}
+
+header{
+	
+	background: rgba(0,0,0,0.6);
+	background-size: cover;
+	background-position: center;
+	padding: 30px;
+	margin:  -10px -10px -50px -10px;
+	font-family: 'Dancing Script', cursive;
+	font-size: 20px;
+	clear: both;
+}
+div{
+	
+	height: 200px;
+	width: 200px;
+	top: 50px;
+	left: 70px;
+	display: block;
+	
+	
+}
+p{
+	font-family: 'Dancing Script', cursive;
+	font-size: 60px;
+	margin-top: -80px;
+	
+}
+.submit{
+       border: 8px solid white;
+       border-radius: 5px;
+       background: white;
+}
+@media (max-width: 500px){
+	p{
+		display: block;
+	}
+
+
+}
+
+          
