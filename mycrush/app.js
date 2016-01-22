@@ -19,6 +19,47 @@ var credentials = extend({
   version_date:'2015-12-02'
 }, bluemix.getServiceCreds('visual_recognition')); // VCAP_SERVICES
 
+var natural_language_classifier = watson.natural_language_classifier({
+	"version": 'v1',
+	"url": "https://gateway.watsonplatform.net/natural-language-classifier/api",
+    "username": "d12d0e9e-d7ac-45a4-8b8e-9a532e1f640b",
+    "password": "n6OXkskqFlan"
+	});
+
+/*var params = {
+		  language: 'en',
+		  name: 'My Classifier',
+		  training_data: fs.createReadStream('./Dating_train.csv')
+		};
+
+		natural_language_classifier.create(params, function(err, response) {
+		  if (err)
+		    console.log(err);
+		  else
+		    console.log(JSON.stringify(response, null, 2));
+		  
+		 
+		});*/
+
+natural_language_classifier.list({},
+		  function(err, response) {
+		    if (err)
+		        console.log('error:', err);
+		      else
+		        console.log(JSON.stringify(response, null, 2));
+		  }
+		);
+
+natural_language_classifier.status({
+	  classifier_id: '563C46x20-nlc-755' },
+	  function(err, response) {
+	    if (err)
+	      console.log('error:', err);
+	    else
+	      console.log(JSON.stringify(response, null, 2));
+	  }
+	);
+
 
 
 //Create the service wrapper
@@ -107,10 +148,41 @@ app.post('/',function(req,res){
       		
       		if(maxClass.indexOf("male") > -1){
       			response1.male = maxScore;
+      			if(percentage > 60)
+      				{
+      				natural_language_classifier.classify({
+      					  text: 'Beautiful?',
+      					  classifier_id: '563C46x20-nlc-755' },
+      					  function(err, response) {
+      					    if (err)
+      					      console.log('error:', err);
+      					    else
+      					    	response1.dating=response.classes[0].confidence
+      					    	console.log("***",response1.dating)
+      					});
+      				}
       		
       		}
       		if(maxClass.indexOf("female") > -1){
       			response1.female = maxScore;
+      			if(percentage > 60)
+  				{
+
+
+  				natural_language_classifier.classify({
+  					  text: 'Beautiful?',
+  					  classifier_id: '563C46x20-nlc-755' },
+  					  function(err, response) {
+  					    if (err)
+  					      console.log('error:', err);
+  					    else
+  					    	response1.dating=response.classes[0].confidence
+  					    	console.log(response1.dating)
+  					    	res.json(response1);
+  					});
+  				
+  				
+  				}
       		
       		}
       		if(maxClass.indexOf("Brown") > -1){
